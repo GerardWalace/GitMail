@@ -48,15 +48,15 @@ namespace GitMail
                 html += "<p><b><u>En voici la liste :</u></b></p>";
                 //html += "<p>&nbsp;</p>";
 
-                html += "<table border=1 cellspacing=0 cellpadding=0 style='margin-left:50pt'>";
+                html += "<table border=1 cellspacing=0 cellpadding=0 style='margin-left:50px'>";
                 html += "<tr>";
-                html += "<td style='background:#BFBFBF;padding:0cm 5.4pt 0cm 5.4pt'>";
+                html += "<td style='background:#BFBFBF;padding:5px'>";
                 html += "<p style='text-align:center'><b>Fichiers en conflits</b></p>";
                 html += "</td>";
-                html += "<td style='background:#BFBFBF;padding:0cm 5.4pt 0cm 5.4pt'>";
+                html += "<td style='background:#BFBFBF;padding:5px'>";
                 html += String.Format("<p style='text-align:center'><b>Commits sur la branche <span style='color:red'>{0}</span></b></p>", BranchFrom); ;
                 html += "</td>";
-                html += "<td style='background:#BFBFBF;padding:0cm 5.4pt 0cm 5.4pt'>";
+                html += "<td style='background:#BFBFBF;padding:5px'>";
                 html += String.Format("<p style='text-align:center'><b>Commits sur la branche <span style='color:red'>{0}</span></b></p>", BranchInto); ;
                 html += "</td>";
                 html += "</tr>";
@@ -65,10 +65,10 @@ namespace GitMail
                 foreach (var fichier in Fichiers)
                 {
                     html += "<tr>";
-                    html += "<td style='padding:0cm 5.4pt 0cm 5.4pt'>";
+                    html += "<td style='padding:5px'>";
                     html += String.Format("<p>{0}</p>", fichier.FichierPath);
                     html += "</td>";
-                    html += "<td style='padding:0cm 5.4pt 0cm 5.4pt'>";
+                    html += "<td style='padding:5px'>";
                     html += "<p>";
                     foreach (var log in fichier.LogBranchFrom)
                     {
@@ -76,7 +76,7 @@ namespace GitMail
                     }
                     html += "</p>";
                     html += "</td>";
-                    html += "<td style='padding:0cm 5.4pt 0cm 5.4pt'>";
+                    html += "<td style='padding:5px'>";
                     html += "<p>";
                     foreach (var log in fichier.LogBranchInto)
                     {
@@ -97,11 +97,11 @@ namespace GitMail
             html += String.Format("<p><b><u>La listes des <span style='font-size:14.0pt;color:red'>{0}</span> commits qui peuvent être mergés de {1} vers {2} est la suivante :</u></b></p>", CommitsMerged.Count, BranchFrom, BranchInto);
             //html += "<p>&nbsp;</p>";
 
-            html += "<table border=1 cellspacing=0 cellpadding=0 style='margin-left:50pt'>";
+            html += "<table border=1 cellspacing=0 cellpadding=0 style='margin-left:50px'>";
             foreach (var commit in CommitsMerged)
             {
                 html += "<tr>";
-                html += "<td style='padding:0cm 5.4pt 0cm 5.4pt'>";
+                html += "<td style='padding:5px'>";
                 html += String.Format("<p>{0}</p>", commit);
                 html += "</td>";
                 html += "</tr>";
