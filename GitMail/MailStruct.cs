@@ -37,16 +37,16 @@ namespace GitMail
             html += "<html>";
             html += "<body>";
             html += String.Format("<p><b><u><span style='font-size:14.0pt'>Compte-rendu de la simulation de merge de <span style='color:red'>{0}</span> vers <span style='color:red'>{1}</span></span></u></b></p>", BranchFrom, BranchInto);
-            html += "<p>&nbsp;</p>";
+            //html += "<p>&nbsp;</p>";
 
             // S'il y eu des conflits
             if (Fichiers.Any())
             {
                 html += String.Format("<p>Il y a eu <b><span style='font-size:14.0pt;color:red'>{0}</span></b> conflits !!!</p>", Fichiers.Count);
 
-                html += "<p>&nbsp;</p>";
+                //html += "<p>&nbsp;</p>";
                 html += "<p><b><u>En voici la liste :</u></b></p>";
-                html += "<p>&nbsp;</p>";
+                //html += "<p>&nbsp;</p>";
 
                 html += "<table border=1 cellspacing=0 cellpadding=0 style='margin-left:50pt'>";
                 html += "<tr>";
@@ -69,16 +69,20 @@ namespace GitMail
                     html += String.Format("<p>{0}</p>", fichier.FichierPath);
                     html += "</td>";
                     html += "<td style='padding:0cm 5.4pt 0cm 5.4pt'>";
+                    html += "<p>";
                     foreach (var log in fichier.LogBranchFrom)
                     {
-                        html += String.Format("<p>{0}</p>", log);
+                        html += String.Format("{0}<br>", log);
                     }
+                    html += "</p>";
                     html += "</td>";
                     html += "<td style='padding:0cm 5.4pt 0cm 5.4pt'>";
+                    html += "<p>";
                     foreach (var log in fichier.LogBranchInto)
                     {
-                        html += String.Format("<p>{0}</p>", log);
+                        html += String.Format("{0}<br>", log);
                     }
+                    html += "</p>";
                     html += "</td>";
                     html += "</tr>";
                 }
@@ -89,9 +93,9 @@ namespace GitMail
                 html += "<p>Il n'y a pas eu de conflits, <b><span style='font-size:14.0pt;color:green'>BRAVO</span></b> !!!</p>";
             }
 
-            html += "<p>&nbsp;</p>";
+            //html += "<p>&nbsp;</p>";
             html += String.Format("<p><b><u>La listes des <span style='font-size:14.0pt;color:red'>{0}</span> commits qui peuvent être mergés de {1} vers {2} est la suivante :</u></b></p>", CommitsMerged.Count, BranchFrom, BranchInto);
-            html += "<p>&nbsp;</p>";
+            //html += "<p>&nbsp;</p>";
 
             html += "<table border=1 cellspacing=0 cellpadding=0 style='margin-left:50pt'>";
             foreach (var commit in CommitsMerged)
@@ -104,10 +108,10 @@ namespace GitMail
             }
             html += "</table>";
 
-            html += "<p>&nbsp;</p>";
+            //html += "<p>&nbsp;</p>";
             html += "<p>En vous souhaitant une git journée.</p>";
             html += "<p>A demain !</p>";
-            html += "<p>&nbsp;</p>";
+            //html += "<p>&nbsp;</p>";
 
             html += "</body>";
             html += "</html>";
