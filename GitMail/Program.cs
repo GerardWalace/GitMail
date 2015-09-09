@@ -113,35 +113,51 @@ namespace GitMail
             procStartInfo.UseShellExecute = false;
             procStartInfo.CreateNoWindow = true;
 
-            Process proc = new Process();
-            proc.StartInfo = procStartInfo;
-            proc.Start();
+            try
+            {
+                Process proc = new Process();
+                proc.StartInfo = procStartInfo;
+                proc.Start();
 
-            string output = proc.StandardOutput.ReadToEnd();
-            string error = proc.StandardError.ReadToEnd();
-            Console.WriteLine(output);
-            Console.WriteLine(error);
-            return output;
+                string output = proc.StandardOutput.ReadToEnd();
+                string error = proc.StandardError.ReadToEnd();
+                Console.WriteLine(output);
+                Console.WriteLine(error);
+                return output;
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e);
+                return String.Empty;
+            }
         }
 
         static void SendMail(string subject, string destinataires, string body)
         {
-            MailMessage mail = new MailMessage("test.git@test.com", destinataires);
+            MailMessage mail = new MailMessage("test.git@gmail.com", destinataires);
             SmtpClient client = new SmtpClient();
             
-            client.Port = 587;
+            client.Port = 25;
+
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
             client.UseDefaultCredentials = false;
             client.EnableSsl = true;
-            client.Credentials = new NetworkCredential("test.git@test.com", "password");
+            client.Credentials = new NetworkCredential("test.git@gmail.com", "password");
             
-            client.Host = "smtp-mail.test.com";
-
+            client.Host = "smtp.gmail.com";
+            
             mail.Subject = subject;
             mail.IsBodyHtml = true;
             mail.Body = body;
 
-            client.Send(mail);
+            try
+            {
+                client.Send(mail);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
     }
 }
