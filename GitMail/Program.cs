@@ -5,6 +5,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
@@ -75,12 +76,12 @@ namespace GitMail
                         // On annule le merge en erreur
                         ExecuteCommand(repoConf.DirectoryPath, "git merge --abort");
                     }
+
                     // On prépare le mail de récapitulatif
                     string body = mailStruct.GetMailBody();
 
-
                     // On envoi le mail
-                    // TODO Envoyer le mail
+                    SendMail(mailStruct.Objet, mailStruct.Destinataire, body);            
                 }
             }     
         }
@@ -100,35 +101,47 @@ namespace GitMail
 
         static string ExecuteCommand(string workingDirectory, string command)
         {
-            try
-            {
-                Console.WriteLine();
-                Console.WriteLine(command);
+            Console.WriteLine();
+            Console.WriteLine(command);
 
-                // Le /c signifie que l'on execute la command et que l'on quitte ensuite
-                ProcessStartInfo procStartInfo = new ProcessStartInfo("cmd", "/c " + command);
+            // Le /c signifie que l'on execute la command et que l'on quitte ensuite
+            ProcessStartInfo procStartInfo = new ProcessStartInfo("cmd", "/c " + command);
 
-                procStartInfo.WorkingDirectory = workingDirectory;
-                procStartInfo.RedirectStandardOutput = true;
-                procStartInfo.RedirectStandardError = true;
-                procStartInfo.UseShellExecute = false;
-                procStartInfo.CreateNoWindow = true;
+            procStartInfo.WorkingDirectory = workingDirectory;
+            procStartInfo.RedirectStandardOutput = true;
+            procStartInfo.RedirectStandardError = true;
+            procStartInfo.UseShellExecute = false;
+            procStartInfo.CreateNoWindow = true;
 
-                Process proc = new Process();
-                proc.StartInfo = procStartInfo;
-                proc.Start();
+            Process proc = new Process();
+            proc.StartInfo = procStartInfo;
+            proc.Start();
 
-                string output = proc.StandardOutput.ReadToEnd();
-                string error = proc.StandardError.ReadToEnd();
-                Console.WriteLine(output);
-                Console.WriteLine(error);
-                return output;
-            }
-            catch (Exception e)
-            {
-                // TODO Log
-                return String.Empty;
-            }
-        }        
+            string output = proc.StandardOutput.ReadToEnd();
+            string error = proc.StandardError.ReadToEnd();
+            Console.WriteLine(output);
+            Console.WriteLine(error);
+            return output;
+        }
+
+        static void SendMail(string subject, string destinataires, string body)
+        {
+            MailMessage mail = new MailMessage("test.git@test.com", destinataires);
+            SmtpClient client = new SmtpClient();
+            
+            client.Port = 587;
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            client.UseDefaultCredentials = false;
+            client.EnableSsl = true;
+            client.Credentials = new NetworkCredential("test.git@test.com", "password");
+            
+            client.Host = "smtp-mail.test.com";
+
+            mail.Subject = subject;
+            mail.IsBodyHtml = true;
+            mail.Body = body;
+
+            client.Send(mail);
+        }
     }
 }
