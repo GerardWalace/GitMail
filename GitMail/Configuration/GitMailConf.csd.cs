@@ -24,7 +24,7 @@ namespace GitMail.Configuration
         /// The XML name of the individual <see cref="global::GitMail.Configuration.RepositoryConfiguration"/> instances in this collection.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.1.7")]
-        internal const string RepositoryConfigurationPropertyName = "configurationElement1";
+        internal const string RepositoryConfigurationPropertyName = "repositoryConfiguration";
         #endregion
         
         #region Overrides
@@ -117,30 +117,6 @@ namespace GitMail.Configuration
             {
                 return ((global::GitMail.Configuration.RepositoryConfiguration)(base.BaseGet(directoryPath)));
             }
-        }
-        #endregion
-        
-        #region Add
-        /// <summary>
-        /// Adds the specified <see cref="global::GitMail.Configuration.RepositoryConfiguration"/> to the <see cref="global::System.Configuration.ConfigurationElementCollection"/>.
-        /// </summary>
-        /// <param name="configurationElement1">The <see cref="global::GitMail.Configuration.RepositoryConfiguration"/> to add.</param>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.1.7")]
-        public void Add(global::GitMail.Configuration.RepositoryConfiguration configurationElement1)
-        {
-            base.BaseAdd(configurationElement1);
-        }
-        #endregion
-        
-        #region Remove
-        /// <summary>
-        /// Removes the specified <see cref="global::GitMail.Configuration.RepositoryConfiguration"/> from the <see cref="global::System.Configuration.ConfigurationElementCollection"/>.
-        /// </summary>
-        /// <param name="configurationElement1">The <see cref="global::GitMail.Configuration.RepositoryConfiguration"/> to remove.</param>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.1.7")]
-        public void Remove(global::GitMail.Configuration.RepositoryConfiguration configurationElement1)
-        {
-            base.BaseRemove(this.GetElementKey(configurationElement1));
         }
         #endregion
         
@@ -419,7 +395,7 @@ namespace GitMail.Configuration
         /// The XML name of the individual <see cref="global::GitMail.Configuration.MergeConfiguration"/> instances in this collection.
         /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.1.7")]
-        internal const string MergeConfigurationPropertyName = "configurationElement2";
+        internal const string MergeConfigurationPropertyName = "mergeConfiguration";
         #endregion
         
         #region Overrides
@@ -512,30 +488,6 @@ namespace GitMail.Configuration
             {
                 return ((global::GitMail.Configuration.MergeConfiguration)(base.BaseGet(mailObject)));
             }
-        }
-        #endregion
-        
-        #region Add
-        /// <summary>
-        /// Adds the specified <see cref="global::GitMail.Configuration.MergeConfiguration"/> to the <see cref="global::System.Configuration.ConfigurationElementCollection"/>.
-        /// </summary>
-        /// <param name="configurationElement2">The <see cref="global::GitMail.Configuration.MergeConfiguration"/> to add.</param>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.1.7")]
-        public void Add(global::GitMail.Configuration.MergeConfiguration configurationElement2)
-        {
-            base.BaseAdd(configurationElement2);
-        }
-        #endregion
-        
-        #region Remove
-        /// <summary>
-        /// Removes the specified <see cref="global::GitMail.Configuration.MergeConfiguration"/> from the <see cref="global::System.Configuration.ConfigurationElementCollection"/>.
-        /// </summary>
-        /// <param name="configurationElement2">The <see cref="global::GitMail.Configuration.MergeConfiguration"/> to remove.</param>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.1.7")]
-        public void Remove(global::GitMail.Configuration.MergeConfiguration configurationElement2)
-        {
-            base.BaseRemove(this.GetElementKey(configurationElement2));
         }
         #endregion
         

@@ -11,7 +11,7 @@
     <externalType name="TimeSpan" namespace="System" />
   </typeDefinitions>
   <configurationElements>
-    <configurationElementCollection name="RepositoryCollection" xmlItemName="configurationElement1" codeGenOptions="Indexer, AddMethod, RemoveMethod, GetItemMethods">
+    <configurationElementCollection name="RepositoryCollection" xmlItemName="repositoryConfiguration" codeGenOptions="Indexer, GetItemMethods">
       <itemType>
         <configurationElementMoniker name="/c5f6cfa3-856e-4533-83e4-0da973fb5c4a/RepositoryConfiguration" />
       </itemType>
@@ -53,7 +53,7 @@
         </elementProperty>
       </elementProperties>
     </configurationElement>
-    <configurationElementCollection name="MergeCollection" xmlItemName="configurationElement2" codeGenOptions="Indexer, AddMethod, RemoveMethod, GetItemMethods">
+    <configurationElementCollection name="MergeCollection" xmlItemName="mergeConfiguration" codeGenOptions="Indexer, GetItemMethods">
       <itemType>
         <configurationElementMoniker name="/c5f6cfa3-856e-4533-83e4-0da973fb5c4a/MergeConfiguration" />
       </itemType>

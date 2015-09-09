@@ -47,6 +47,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>GitMailConf.csd</DependentUpon>
     </Compile>
+    <Compile Include="MailStruct.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

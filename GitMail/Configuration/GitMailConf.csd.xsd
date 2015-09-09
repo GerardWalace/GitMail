@@ -11,7 +11,7 @@
 	<xs:element name="gitMailConfiguration" type="tns:GitMail.Configuration.GitMailConfigurationCT" />
 	<xs:complexType name="GitMail.Configuration.RepositoryCollectionCT">
 		<xs:choice minOccurs="0" maxOccurs="unbounded">
-			<xs:element minOccurs="0" maxOccurs="unbounded" name="configurationElement1" type="tns:GitMail.Configuration.RepositoryConfigurationCT">
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="repositoryConfiguration" type="tns:GitMail.Configuration.RepositoryConfigurationCT">
 				<xs:annotation>
 					<xs:documentation>The RepositoryConfiguration Configuration Element.</xs:documentation>
 				</xs:annotation>
@@ -53,7 +53,7 @@
 	</xs:complexType>
 	<xs:complexType name="GitMail.Configuration.MergeCollectionCT">
 		<xs:choice minOccurs="0" maxOccurs="unbounded">
-			<xs:element minOccurs="0" maxOccurs="unbounded" name="configurationElement2" type="tns:GitMail.Configuration.MergeConfigurationCT">
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="mergeConfiguration" type="tns:GitMail.Configuration.MergeConfigurationCT">
 				<xs:annotation>
 					<xs:documentation>The MergeConfiguration Configuration Element.</xs:documentation>
 				</xs:annotation>
