@@ -20,7 +20,11 @@ namespace GitMail
 
         public string BranchInto { get; set; }
 
+        public string BranchInto_LastCommit { get; set; }
+
         public string BranchFrom { get; set; }
+
+        public string BranchFrom_LastCommit { get; set; }
 
         public List<string> CommitsMerged { get; private set; }
 
@@ -36,7 +40,7 @@ namespace GitMail
 
             html += "<html>";
             html += "<body>";
-            html += String.Format("<p><b><u><span style='font-size:14.0pt'>Compte-rendu de la simulation de merge de <span style='color:red'>{0}</span> vers <span style='color:red'>{1}</span></span></u></b></p>", BranchFrom, BranchInto);
+            html += String.Format("<p><b><u><span style='font-size:14.0pt'>Compte-rendu de la simulation de merge de <span style='color:red'>{0}</span> ({1}) vers <span style='color:red'>{2}</span> ({3})</span></u></b></p>", BranchFrom, BranchFrom_LastCommit, BranchInto, BranchInto_LastCommit);
             //html += "<p>&nbsp;</p>";
 
             // S'il y eu des conflits
@@ -54,10 +58,10 @@ namespace GitMail
                 html += "<p style='text-align:center'><b>Fichiers en conflits</b></p>";
                 html += "</td>";
                 html += "<td style='background:#BFBFBF;padding:5px'>";
-                html += String.Format("<p style='text-align:center'><b>Commits sur la branche <span style='color:red'>{0}</span></b></p>", BranchFrom); ;
+                html += String.Format("<p style='text-align:center'><b>Commits sur la branche <span style='color:red'>{0}</span> ({1})</b></p>", BranchFrom, BranchFrom_LastCommit); ;
                 html += "</td>";
                 html += "<td style='background:#BFBFBF;padding:5px'>";
-                html += String.Format("<p style='text-align:center'><b>Commits sur la branche <span style='color:red'>{0}</span></b></p>", BranchInto); ;
+                html += String.Format("<p style='text-align:center'><b>Commits sur la branche <span style='color:red'>{0}</span> ({1})</b></p>", BranchInto, BranchInto_LastCommit); ;
                 html += "</td>";
                 html += "</tr>";
 

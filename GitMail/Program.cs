@@ -45,6 +45,10 @@ namespace GitMail
                     mailStruct.BranchInto = mergeConf.IntoBranch;
                     mailStruct.BranchFrom = mergeConf.FromBranch;
 
+                    // On indique le dernier commit sur chaque branche
+                    mailStruct.BranchInto_LastCommit = ExecuteCommand(repoConf.DirectoryPath, String.Format("git log -1 --pretty=format:\"%h\" origin/{0}", mergeConf.IntoBranch));;
+                    mailStruct.BranchFrom_LastCommit = ExecuteCommand(repoConf.DirectoryPath, String.Format("git log -1 --pretty=format:\"%h\" origin/{0}", mergeConf.FromBranch)); ;
+
                     // On liste les commits qui vont être mergés
                     string commitsAMerger = ExecuteCommand(repoConf.DirectoryPath, String.Format("git log --oneline origin/{0}..origin/{1}", mergeConf.IntoBranch, mergeConf.FromBranch));
                     mailStruct.CommitsMerged.AddRange(SplitResult(commitsAMerger));
