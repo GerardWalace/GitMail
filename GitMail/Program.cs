@@ -46,18 +46,18 @@ namespace GitMail
                     mailStruct.BranchFrom = mergeConf.FromBranch;
 
                     // On indique le dernier commit sur chaque branche
-                    mailStruct.BranchInto_LastCommit = ExecuteCommand(repoConf.DirectoryPath, String.Format("git log -1 --pretty=format:\"%h\" origin/{0}", mergeConf.IntoBranch));;
-                    mailStruct.BranchFrom_LastCommit = ExecuteCommand(repoConf.DirectoryPath, String.Format("git log -1 --pretty=format:\"%h\" origin/{0}", mergeConf.FromBranch)); ;
+                    mailStruct.BranchInto_LastCommit = ExecuteCommand(repoConf.DirectoryPath, String.Format("git log -1 --pretty=format:\"%h\" {0}", mergeConf.IntoBranch));;
+                    mailStruct.BranchFrom_LastCommit = ExecuteCommand(repoConf.DirectoryPath, String.Format("git log -1 --pretty=format:\"%h\" {0}", mergeConf.FromBranch)); ;
 
                     // On liste les commits qui vont être mergés
-                    string commitsAMerger = ExecuteCommand(repoConf.DirectoryPath, String.Format("git log --oneline origin/{0}..origin/{1}", mergeConf.IntoBranch, mergeConf.FromBranch));
+                    string commitsAMerger = ExecuteCommand(repoConf.DirectoryPath, String.Format("git log --oneline {0}..{1}", mergeConf.IntoBranch, mergeConf.FromBranch));
                     mailStruct.CommitsMerged.AddRange(SplitResult(commitsAMerger));
 
                     // On effectue un Checkout de la branch 1 (en detach pour ne pas avoir d'impact sur celle-ci)
-                    ExecuteCommand(repoConf.DirectoryPath, String.Format("git checkout origin/{0} --detach", mergeConf.IntoBranch));
+                    ExecuteCommand(repoConf.DirectoryPath, String.Format("git checkout {0} --detach", mergeConf.IntoBranch));
 
                     // On effectue le merge avec la branch 2
-                    ExecuteCommand(repoConf.DirectoryPath, String.Format("git merge --quiet --stat origin/{0}", mergeConf.FromBranch));
+                    ExecuteCommand(repoConf.DirectoryPath, String.Format("git merge --quiet --stat {0}", mergeConf.FromBranch));
 
                     // On les fichiers en conflits
                     string fichiersEnConflit = ExecuteCommand(repoConf.DirectoryPath, "git ls-files --unmerged | cut --fields 2 | uniq");
@@ -71,8 +71,8 @@ namespace GitMail
                             mailStructFichier.FichierPath = fichier;
 
                             // Pour chacun des fichiers en conflit, on récupère des informations sur les derniers commits
-                            mailStructFichier.LogBranchFrom.AddRange(SplitResult(ExecuteCommand(repoConf.DirectoryPath, String.Format("git log --follow origin/{0}..origin/{1} --pretty=format:\"%h %an\" -- {2}", mergeConf.IntoBranch, mergeConf.FromBranch, fichier))));
-                            mailStructFichier.LogBranchInto.AddRange(SplitResult(ExecuteCommand(repoConf.DirectoryPath, String.Format("git log --follow origin/{0}..origin/{1} --pretty=format:\"%h %an\" -- {2}", mergeConf.FromBranch, mergeConf.IntoBranch, fichier))));
+                            mailStructFichier.LogBranchFrom.AddRange(SplitResult(ExecuteCommand(repoConf.DirectoryPath, String.Format("git log --follow {0}..{1} --pretty=format:\"%h %an\" -- {2}", mergeConf.IntoBranch, mergeConf.FromBranch, fichier))));
+                            mailStructFichier.LogBranchInto.AddRange(SplitResult(ExecuteCommand(repoConf.DirectoryPath, String.Format("git log --follow {0}..{1} --pretty=format:\"%h %an\" -- {2}", mergeConf.FromBranch, mergeConf.IntoBranch, fichier))));
 
                             mailStruct.Fichiers.Add(mailStructFichier);
                         }
