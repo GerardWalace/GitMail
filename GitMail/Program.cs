@@ -17,7 +17,7 @@ namespace GitMail
         static void Main(string[] args)
         {
             // On récupère la conf
-            var conf = GitMailConfiguration.Instance;            
+            var conf = GitMailConfiguration.Instance;
 
             // Si un path specifique de git est donné, on le rajoute au path
             // TODO Rajouter le path de git au path de la présente application
@@ -84,8 +84,9 @@ namespace GitMail
                     // On prépare le mail de récapitulatif
                     string body = mailStruct.GetMailBody();
 
-                    // On envoi le mail
-                    SendMail(mailStruct.Objet, mailStruct.Destinataire, body);            
+                    // On envoi le mail si un merge est possible (s'il y a des commits "Ahead")
+                    if (mailStruct.CommitsMerged.Any())
+                        SendMail(mailStruct.Objet, mailStruct.Destinataire, body);            
                 }
             }     
         }
