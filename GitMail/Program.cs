@@ -110,7 +110,7 @@ namespace GitMail
             Console.WriteLine(command);
 
             // Le /c signifie que l'on execute la command et que l'on quitte ensuite
-            ProcessStartInfo procStartInfo = new ProcessStartInfo("cmd", "/c " + command);
+            ProcessStartInfo procStartInfo = new ProcessStartInfo("powershell", "-Command " + command);
 
             procStartInfo.WorkingDirectory = workingDirectory;
             procStartInfo.RedirectStandardOutput = true;
