@@ -76,7 +76,10 @@ namespace GitMail
 
                             mailStruct.Fichiers.Add(mailStructFichier);
                         }
+                    }
 
+                    if (File.Exists(Path.Combine(repoConf.DirectoryPath, ".git", "MERGE_HEAD")))
+                    {
                         // On annule le merge en erreur
                         ExecuteCommand(repoConf.DirectoryPath, "git merge --abort");
                     }
