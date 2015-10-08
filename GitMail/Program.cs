@@ -71,8 +71,8 @@ namespace GitMail
                             mailStructFichier.FichierPath = fichier;
 
                             // Pour chacun des fichiers en conflit, on récupère des informations sur les derniers commits
-                            mailStructFichier.LogBranchFrom.AddRange(SplitResult(ExecuteCommand(repoConf.DirectoryPath, String.Format("git log --follow {0}..{1} --pretty=format:\"%h %an\" -- {2}", mergeConf.IntoBranch, mergeConf.FromBranch, fichier))));
-                            mailStructFichier.LogBranchInto.AddRange(SplitResult(ExecuteCommand(repoConf.DirectoryPath, String.Format("git log --follow {0}..{1} --pretty=format:\"%h %an\" -- {2}", mergeConf.FromBranch, mergeConf.IntoBranch, fichier))));
+                            mailStructFichier.LogBranchFrom.AddRange(SplitResult(ExecuteCommand(repoConf.DirectoryPath, String.Format("git log --follow {0}..{1} --pretty=format:\\\"%h %an\\\" -- {2}", mergeConf.IntoBranch, mergeConf.FromBranch, fichier))));
+                            mailStructFichier.LogBranchInto.AddRange(SplitResult(ExecuteCommand(repoConf.DirectoryPath, String.Format("git log --follow {0}..{1} --pretty=format:\\\"%h %an\\\" -- {2}", mergeConf.FromBranch, mergeConf.IntoBranch, fichier))));
 
                             mailStruct.Fichiers.Add(mailStructFichier);
                         }
