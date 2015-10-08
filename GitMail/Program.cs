@@ -91,7 +91,11 @@ namespace GitMail
                     if (mailStruct.CommitsMerged.Any())
                         SendMail(mailStruct.Objet, mailStruct.Destinataire, body);            
                 }
-            }     
+            }
+
+            // On fait une pause afin de laisser l'utilisateur checker que tout va bien.
+            Console.WriteLine("End of GitMail... Press Enter...");
+            Console.ReadLine();
         }
 
         static List<string> SplitResult(string output)
@@ -109,7 +113,7 @@ namespace GitMail
 
         static string ExecuteCommand(string workingDirectory, string command)
         {
-            Console.WriteLine();
+            //Console.WriteLine();
             Console.WriteLine(command);
 
             // Le /c signifie que l'on execute la command et que l'on quitte ensuite
@@ -129,7 +133,7 @@ namespace GitMail
 
                 string output = proc.StandardOutput.ReadToEnd();
                 string error = proc.StandardError.ReadToEnd();
-                Console.WriteLine(output);
+                //Console.WriteLine(output);
                 Console.WriteLine(error);
                 return output;
             }
