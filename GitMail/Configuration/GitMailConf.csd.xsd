@@ -81,5 +81,10 @@
 				<xs:documentation>The MailObject.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
+		<xs:attribute name="isMultiBranch" use="optional" type="xs:boolean">
+			<xs:annotation>
+				<xs:documentation>The IsMultiBranch.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 	</xs:complexType>
 </xs:schema>

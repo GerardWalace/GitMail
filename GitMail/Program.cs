@@ -39,63 +39,85 @@ namespace GitMail
                 var mergeConfs = from MergeConfiguration mergeConf in repoConf.Merges select mergeConf;
                 foreach (var mergeConf in mergeConfs)
                 {
-                    var mailStruct = new MailStruct();
-                    mailStruct.Objet = mergeConf.MailObject;
-                    mailStruct.Destinataire = mergeConf.MailsDesReferents;
-                    mailStruct.BranchInto = mergeConf.IntoBranch;
-                    mailStruct.BranchFrom = mergeConf.FromBranch;
-
-                    // On indique le dernier commit sur chaque branche
-                    mailStruct.BranchInto_LastCommit = ExecuteCommand(repoConf.DirectoryPath, String.Format("git log -1 --pretty=format:\"%h\" {0}", mergeConf.IntoBranch));;
-                    mailStruct.BranchFrom_LastCommit = ExecuteCommand(repoConf.DirectoryPath, String.Format("git log -1 --pretty=format:\"%h\" {0}", mergeConf.FromBranch)); ;
-
-                    // On liste les commits qui vont être mergés
-                    string commitsAMerger = ExecuteCommand(repoConf.DirectoryPath, String.Format("git log --oneline {0}..{1}", mergeConf.IntoBranch, mergeConf.FromBranch));
-                    mailStruct.CommitsMerged.AddRange(SplitResult(commitsAMerger));
-
-                    // On effectue un Checkout de la branch 1 (en detach pour ne pas avoir d'impact sur celle-ci)
-                    ExecuteCommand(repoConf.DirectoryPath, String.Format("git checkout {0} --detach", mergeConf.IntoBranch));
-
-                    // On effectue le merge avec la branch 2
-                    ExecuteCommand(repoConf.DirectoryPath, String.Format("git merge --quiet --stat {0}", mergeConf.FromBranch));
-
-                    // On les fichiers en conflits
-                    string fichiersEnConflit = ExecuteCommand(repoConf.DirectoryPath, "git ls-files --unmerged | cut --fields 2 | uniq");
-                    var listFichiers = SplitResult(fichiersEnConflit);
-
-                    if (listFichiers.Any())
+                    List<string> listFromBranches = new List<string>();
+                    if (mergeConf.IsMultiBranch)
                     {
-                        foreach (var fichier in listFichiers)
-                        {
-                            var mailStructFichier = new MailStructFichier();
-                            mailStructFichier.FichierPath = fichier;
-
-                            // Pour chacun des fichiers en conflit, on récupère des informations sur les derniers commits
-                            mailStructFichier.LogBranchFrom.AddRange(SplitResult(ExecuteCommand(repoConf.DirectoryPath, String.Format("git log --follow {0}..{1} --pretty=format:\\\"%h %an\\\" -- {2}", mergeConf.IntoBranch, mergeConf.FromBranch, fichier))));
-                            mailStructFichier.LogBranchInto.AddRange(SplitResult(ExecuteCommand(repoConf.DirectoryPath, String.Format("git log --follow {0}..{1} --pretty=format:\\\"%h %an\\\" -- {2}", mergeConf.FromBranch, mergeConf.IntoBranch, fichier))));
-
-                            mailStruct.Fichiers.Add(mailStructFichier);
-                        }
+                        string fromBranches = ExecuteCommand(repoConf.DirectoryPath, String.Format("git branch -r | grep \"{0}\" | ForEach-Object {{ $_.Trim() }}", mergeConf.FromBranch));
+                        listFromBranches.AddRange(SplitResult(fromBranches));
+                    }
+                    else
+                    {
+                        listFromBranches.Add(mergeConf.FromBranch);
                     }
 
-                    if (File.Exists(Path.Combine(repoConf.DirectoryPath, ".git", "MERGE_HEAD")))
+                    foreach (var fromBranch in listFromBranches)
                     {
-                        // On annule le merge en erreur
-                        ExecuteCommand(repoConf.DirectoryPath, "git merge --abort");
+                        MergeAndMail(repoConf,
+                            mergeConf.MailsDesReferents,
+                            mergeConf.IntoBranch,
+                            fromBranch);
                     }
-
-                    // On prépare le mail de récapitulatif
-                    string body = mailStruct.GetMailBody();
-
-                    // On envoi le mail si un merge est possible (s'il y a des commits "Ahead")
-                    if (mailStruct.CommitsMerged.Any())
-                        SendMail(mailStruct.Objet, mailStruct.Destinataire, body);            
                 }
             }
 
             // On fait une pause afin de laisser l'utilisateur checker que tout va bien.
             Console.WriteLine("End of GitMail... Press Enter...");
             Console.ReadLine();
+        }
+
+        private static void MergeAndMail(RepositoryConfiguration repoConf, string destinataire, string branchInto, string branchFrom)
+        {
+            var mailStruct = new MailStruct();
+            mailStruct.Objet = String.Format("[GitMail] Simulation de merge {0} vers {1}", branchFrom, branchInto);
+            mailStruct.Destinataire = destinataire;
+            mailStruct.BranchInto = branchInto;
+            mailStruct.BranchFrom = branchFrom;
+
+            // On indique le dernier commit sur chaque branche
+            mailStruct.BranchInto_LastCommit = ExecuteCommand(repoConf.DirectoryPath, String.Format("git log -1 --pretty=format:\"%h\" {0}", branchInto)); ;
+            mailStruct.BranchFrom_LastCommit = ExecuteCommand(repoConf.DirectoryPath, String.Format("git log -1 --pretty=format:\"%h\" {0}", branchFrom)); ;
+
+            // On liste les commits qui vont être mergés
+            string commitsAMerger = ExecuteCommand(repoConf.DirectoryPath, String.Format("git log --oneline {0}..{1}", branchInto, branchFrom));
+            mailStruct.CommitsMerged.AddRange(SplitResult(commitsAMerger));
+
+            // On effectue un Checkout de la branch 1 (en detach pour ne pas avoir d'impact sur celle-ci)
+            ExecuteCommand(repoConf.DirectoryPath, String.Format("git checkout {0} --detach", branchInto));
+
+            // On effectue le merge avec la branch 2
+            ExecuteCommand(repoConf.DirectoryPath, String.Format("git merge --quiet --stat {0}", branchFrom));
+
+            // On les fichiers en conflits
+            string fichiersEnConflit = ExecuteCommand(repoConf.DirectoryPath, "git ls-files --unmerged | cut --fields 2 | uniq");
+            var listFichiers = SplitResult(fichiersEnConflit);
+
+            if (listFichiers.Any())
+            {
+                foreach (var fichier in listFichiers)
+                {
+                    var mailStructFichier = new MailStructFichier();
+                    mailStructFichier.FichierPath = fichier;
+
+                    // Pour chacun des fichiers en conflit, on récupère des informations sur les derniers commits
+                    mailStructFichier.LogBranchFrom.AddRange(SplitResult(ExecuteCommand(repoConf.DirectoryPath, String.Format("git log --follow {0}..{1} --pretty=format:\\\"%h %an\\\" -- {2}", branchInto, branchFrom, fichier))));
+                    mailStructFichier.LogBranchInto.AddRange(SplitResult(ExecuteCommand(repoConf.DirectoryPath, String.Format("git log --follow {0}..{1} --pretty=format:\\\"%h %an\\\" -- {2}", branchFrom, branchInto, fichier))));
+
+                    mailStruct.Fichiers.Add(mailStructFichier);
+                }
+            }
+
+            if (File.Exists(Path.Combine(repoConf.DirectoryPath, ".git", "MERGE_HEAD")))
+            {
+                // On annule le merge en erreur
+                ExecuteCommand(repoConf.DirectoryPath, "git merge --abort");
+            }
+
+            // On prépare le mail de récapitulatif
+            string body = mailStruct.GetMailBody();
+
+            // On envoi le mail si un merge est possible (s'il y a des commits "Ahead")
+            if (mailStruct.CommitsMerged.Any())
+                SendMail(mailStruct.Objet, mailStruct.Destinataire, body);
         }
 
         static List<string> SplitResult(string output)

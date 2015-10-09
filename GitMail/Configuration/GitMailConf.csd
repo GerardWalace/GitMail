@@ -80,6 +80,11 @@
             <externalTypeMoniker name="/c5f6cfa3-856e-4533-83e4-0da973fb5c4a/String" />
           </type>
         </attributeProperty>
+        <attributeProperty name="IsMultiBranch" isRequired="false" isKey="false" isDefaultCollection="false" xmlName="isMultiBranch" isReadOnly="false" defaultValue="false">
+          <type>
+            <externalTypeMoniker name="/c5f6cfa3-856e-4533-83e4-0da973fb5c4a/Boolean" />
+          </type>
+        </attributeProperty>
       </attributeProperties>
     </configurationElement>
   </configurationElements>

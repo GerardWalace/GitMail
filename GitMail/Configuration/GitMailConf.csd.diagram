@@ -44,11 +44,11 @@
         <elementListCompartment Id="b57451b5-2374-47d0-85e6-1b8ab9cc55c5" absoluteBounds="5.5150000000000006, 4.5443896484375, 1.4700000000000002, 0.2493896484375" name="ElementProperties" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </configurationElementCollectionShape>
-    <configurationElementShape Id="3ffe5de0-2e1b-4278-8fe2-0e4b2dd7f1eb" absoluteBounds="9, 4, 1.5, 1.7879850260416665" outlineDashStyle="Solid" outlineThickness="0.01">
+    <configurationElementShape Id="3ffe5de0-2e1b-4278-8fe2-0e4b2dd7f1eb" absoluteBounds="9, 4, 1.5, 1.9802864583333326" outlineDashStyle="Solid" outlineThickness="0.01">
       <configurationElementMoniker name="/c5f6cfa3-856e-4533-83e4-0da973fb5c4a/MergeConfiguration" />
       <nestedChildShapes>
-        <elementListCompartment Id="a686d1f0-dea5-439c-b882-4280ac6fffdd" absoluteBounds="9.015, 4.41, 1.4700000000000002, 1.0185953776041665" name="AttributeProperties" titleTextColor="Black" itemTextColor="Black" />
-        <elementListCompartment Id="2edf511f-6ff4-4126-81eb-ff8246cb60d7" absoluteBounds="9.015, 5.4385953776041669, 1.4700000000000002, 0.2493896484375" name="ElementProperties" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="a686d1f0-dea5-439c-b882-4280ac6fffdd" absoluteBounds="9.015, 4.41, 1.4700000000000002, 1.2108968098958333" name="AttributeProperties" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="2edf511f-6ff4-4126-81eb-ff8246cb60d7" absoluteBounds="9.015, 5.630896809895833, 1.4700000000000002, 0.2493896484375" name="ElementProperties" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </configurationElementShape>
     <configurationElementCollectionHasItemTypeConnector edgePoints="[(5 : 1.3843896484375); (5.5 : 1.3843896484375)]" manuallyRouted="true" fixedFrom="NotFixed" fixedTo="NotFixed" TargetRelationshipDomainClassId="c2b30fd0-a8b8-4b9f-abe5-fd8447c1f53e">
@@ -58,7 +58,7 @@
         <configurationElementShapeMoniker Id="ff1c4992-aba9-4f8e-a5b6-110065b15ce8" />
       </nodes>
     </configurationElementCollectionHasItemTypeConnector>
-    <configurationElementCollectionHasItemTypeConnector edgePoints="[(7 : 4.4468896484375); (9 : 4.4468896484375)]" fixedFrom="NotFixed" fixedTo="NotFixed" TargetRelationshipDomainClassId="c2b30fd0-a8b8-4b9f-abe5-fd8447c1f53e">
+    <configurationElementCollectionHasItemTypeConnector edgePoints="[(7 : 4.4468896484375); (9 : 4.4468896484375)]" fixedFrom="Algorithm" fixedTo="Algorithm" TargetRelationshipDomainClassId="c2b30fd0-a8b8-4b9f-abe5-fd8447c1f53e">
       <relativeChildShapes />
       <nodes>
         <configurationElementCollectionShapeMoniker Id="3ab58ba9-844f-47ff-a70b-8dd9379b31f7" />

@@ -649,5 +649,31 @@ namespace GitMail.Configuration
             }
         }
         #endregion
+        
+        #region IsMultiBranch Property
+        /// <summary>
+        /// The XML name of the <see cref="IsMultiBranch"/> property.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.1.7")]
+        internal const string IsMultiBranchPropertyName = "isMultiBranch";
+        
+        /// <summary>
+        /// Gets or sets the IsMultiBranch.
+        /// </summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("ConfigurationSectionDesigner.CsdFileGenerator", "2.0.1.7")]
+        [global::System.ComponentModel.DescriptionAttribute("The IsMultiBranch.")]
+        [global::System.Configuration.ConfigurationPropertyAttribute(global::GitMail.Configuration.MergeConfiguration.IsMultiBranchPropertyName, IsRequired=false, IsKey=false, IsDefaultCollection=false, DefaultValue=false)]
+        public virtual bool IsMultiBranch
+        {
+            get
+            {
+                return ((bool)(base[global::GitMail.Configuration.MergeConfiguration.IsMultiBranchPropertyName]));
+            }
+            set
+            {
+                base[global::GitMail.Configuration.MergeConfiguration.IsMultiBranchPropertyName] = value;
+            }
+        }
+        #endregion
     }
 }
