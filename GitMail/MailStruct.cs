@@ -6,12 +6,15 @@ using System.Threading.Tasks;
 
 namespace GitMail
 {
+
     class MailStruct
     {
         public MailStruct()
         {
             Fichiers = new List<MailStructFichier>();
             CommitsMerged = new List<string>();
+            BranchesAhead = new List<MailStructBranch>();
+            BranchesBefore = new List<MailStructBranch>();
         }
 
         public string Objet { get; set; }
@@ -27,6 +30,10 @@ namespace GitMail
         public string BranchFrom_LastCommit { get; set; }
 
         public List<string> CommitsMerged { get; private set; }
+
+        public List<MailStructBranch> BranchesAhead { get; private set; }
+
+        public List<MailStructBranch> BranchesBefore { get; private set; }
 
         public List<MailStructFichier> Fichiers { get; private set; }
 
@@ -113,6 +120,42 @@ namespace GitMail
             html += "</table>";
 
             //html += "<p>&nbsp;</p>";
+            html += String.Format("<p><b><u>La listes des <span style='font-size:14.0pt;color:red'>{0}</span> branches \"filles\" qui peuvent être mergés vers {1} est la suivante :</u></b></p>", BranchesAhead.Count, BranchInto);
+            //html += "<p>&nbsp;</p>";
+
+            html += "<table border=1 cellspacing=0 cellpadding=0 style='margin-left:50px'>";
+            foreach (var branch in BranchesAhead)
+            {
+                html += "<tr>";
+                html += "<td style='padding:5px'>";
+                html += String.Format("<p>{0}</p>", branch.BranchName);
+                html += "</td>";
+                html += "<td style='padding:5px'>";
+                html += String.Format("<p>{0}</p>", branch.LastUpdate);
+                html += "</td>";
+                html += "</tr>";
+            }
+            html += "</table>";
+
+            //html += "<p>&nbsp;</p>";
+            html += String.Format("<p><b><u>Certaines branches \"filles\" (<span style='font-size:14.0pt;color:red'>{0}</span>) de {1} pourraient être supprimées :</u></b></p>", BranchesBefore.Count, BranchInto);
+            //html += "<p>&nbsp;</p>";
+
+            html += "<table border=1 cellspacing=0 cellpadding=0 style='margin-left:50px'>";
+            foreach (var branch in BranchesBefore)
+            {
+                html += "<tr>";
+                html += "<td style='padding:5px'>";
+                html += String.Format("<p>{0}</p>", branch.BranchName);
+                html += "</td>";
+                html += "<td style='padding:5px'>";
+                html += String.Format("<p>{0}</p>", branch.LastUpdate);
+                html += "</td>";
+                html += "</tr>";
+            }
+            html += "</table>";
+
+            //html += "<p>&nbsp;</p>";
             html += "<p>En vous souhaitant une git journée.</p>";
             html += "<p>A demain !</p>";
             //html += "<p>&nbsp;</p>";
@@ -137,5 +180,11 @@ namespace GitMail
         public List<string> LogBranchInto { get; private set; }
 
         public List<string> LogBranchFrom { get; private set; }
+    }
+    
+    class MailStructBranch
+    {
+        public String BranchName { get; set; }
+        public String LastUpdate { get; set; }
     }
 }

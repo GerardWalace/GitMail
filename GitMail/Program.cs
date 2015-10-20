@@ -30,7 +30,7 @@ namespace GitMail
                 if (!Directory.Exists(repoConf.DirectoryPath))
                     ExecuteCommand(String.Format("git clone {0} {1}", repoConf.RepositoryPath, repoConf.DirectoryPath));
                 else
-                    ExecuteCommand(repoConf.DirectoryPath, "git fetch");
+                    ExecuteCommand(repoConf.DirectoryPath, "git fetch --prune");
 
                 // On nettoie le repo pour supprimer tous les commit temporaires effectué par un precedent traitement
                 ExecuteCommand(repoConf.DirectoryPath, "git gc --auto");
@@ -84,6 +84,22 @@ namespace GitMail
             // On effectue un Checkout de la branch 1 (en detach pour ne pas avoir d'impact sur celle-ci)
             ExecuteCommand(repoConf.DirectoryPath, String.Format("git checkout {0} --detach", branchInto));
 
+            // On recupere la liste de toutes les branches "filles" qui pourraient etre recuperees
+            string branchesFillesAhead = ExecuteCommand(repoConf.DirectoryPath, string.Format("git branch -r --no-merged | grep \"${0}-\" | ForEach-Object {{ $_.Trim() }}", branchInto));
+            foreach (string branchName in SplitResult(branchesFillesAhead))
+            {
+                string lastUpdate = ExecuteCommand(repoConf.DirectoryPath, string.Format("git log -1 --pretty=format:%cr {0}", branchName));
+                mailStruct.BranchesAhead.Add(new MailStructBranch() { BranchName = branchName, LastUpdate = lastUpdate });
+            }
+
+            // On recupere la liste de toutes les branches "filles" qui peuvent etre supprimees
+            string branchesFillesBefore = ExecuteCommand(repoConf.DirectoryPath, string.Format("git branch -r --merged | grep \"${0}-\" | ForEach-Object {{ $_.Trim() }}", branchInto));
+            foreach (string branchName in SplitResult(branchesFillesBefore))
+            {
+                string lastUpdate = ExecuteCommand(repoConf.DirectoryPath, string.Format("git log -1 --pretty=format:%cr {0}", branchName));
+                mailStruct.BranchesBefore.Add(new MailStructBranch() { BranchName = branchName, LastUpdate = lastUpdate });
+            }
+
             // On effectue le merge avec la branch 2
             ExecuteCommand(repoConf.DirectoryPath, String.Format("git merge --quiet --stat {0}", branchFrom));
 
@@ -116,7 +132,7 @@ namespace GitMail
             string body = mailStruct.GetMailBody();
 
             // On envoi le mail si un merge est possible (s'il y a des commits "Ahead")
-            if (mailStruct.CommitsMerged.Any())
+            if (mailStruct.CommitsMerged.Any() || mailStruct.BranchesAhead.Any() || mailStruct.BranchesBefore.Any())
                 SendMail(mailStruct.Objet, mailStruct.Destinataire, body);
         }
 
