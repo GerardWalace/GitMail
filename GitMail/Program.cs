@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace GitMail
@@ -151,6 +152,8 @@ namespace GitMail
 
         static string ExecuteCommand(string workingDirectory, string command)
         {
+            int timeout = 600000;// 10 minutes de timeout...
+
             //Console.WriteLine();
             Console.WriteLine(command);
 
@@ -165,15 +168,56 @@ namespace GitMail
 
             try
             {
-                Process proc = new Process();
-                proc.StartInfo = procStartInfo;
-                proc.Start();
+                using (Process proc = new Process())
+                {
+                    proc.StartInfo = procStartInfo;
+                    StringBuilder output = new StringBuilder();
+                    StringBuilder error = new StringBuilder();
 
-                string output = proc.StandardOutput.ReadToEnd();
-                string error = proc.StandardError.ReadToEnd();
-                //Console.WriteLine(output);
-                Console.WriteLine(error);
-                return output;
+                    using (AutoResetEvent outputWaitHandle = new AutoResetEvent(false))
+                    using (AutoResetEvent errorWaitHandle = new AutoResetEvent(false))
+                    {
+                        proc.OutputDataReceived += (sender, e) =>
+                        {
+                            if (e.Data == null)
+                            {
+                                outputWaitHandle.Set();
+                            }
+                            else
+                            {
+                                output.AppendLine(e.Data);
+                            }
+                        };
+                        proc.ErrorDataReceived += (sender, e) =>
+                        {
+                            if (e.Data == null)
+                            {
+                                errorWaitHandle.Set();
+                            }
+                            else
+                            {
+                                error.AppendLine(e.Data);
+                            }
+                        };
+
+                        proc.Start();
+
+                        proc.BeginOutputReadLine();
+                        proc.BeginErrorReadLine();
+
+                        if (proc.WaitForExit(timeout) &&
+                            outputWaitHandle.WaitOne(timeout) &&
+                            errorWaitHandle.WaitOne(timeout))
+                        {
+                            Console.WriteLine(error.ToString());
+                            return output.ToString();
+                        }
+                        else
+                        {
+                            throw new TimeoutException(String.Format("Bon... Ca fait {0} minutes qu'on attend, il est peut être temps d'arreter !", timeout / 60000));
+                        }
+                    }
+                }
             }
             catch(Exception e)
             {
