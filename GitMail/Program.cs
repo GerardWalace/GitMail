@@ -75,21 +75,21 @@ namespace GitMail
             mailStruct.BranchFrom = branchFrom;
 
             // On indique le dernier commit sur chaque branche
-            mailStruct.BranchInto_LastCommit = ExecuteCommand(repoConf.DirectoryPath, String.Format("git log -1 --pretty=format:\"%h\" {0}", branchInto)); ;
-            mailStruct.BranchFrom_LastCommit = ExecuteCommand(repoConf.DirectoryPath, String.Format("git log -1 --pretty=format:\"%h\" {0}", branchFrom)); ;
+            mailStruct.BranchInto_LastCommit = ExecuteCommand(repoConf.DirectoryPath, String.Format("git log -1 --pretty=format:\"%h\" {0} --", branchInto)); ;
+            mailStruct.BranchFrom_LastCommit = ExecuteCommand(repoConf.DirectoryPath, String.Format("git log -1 --pretty=format:\"%h\" {0} --", branchFrom)); ;
 
             // On liste les commits qui vont être mergés
-            string commitsAMerger = ExecuteCommand(repoConf.DirectoryPath, String.Format("git log --oneline {0}..{1}", branchInto, branchFrom));
+            string commitsAMerger = ExecuteCommand(repoConf.DirectoryPath, String.Format("git log --oneline {0}..{1} --", branchInto, branchFrom));
             mailStruct.CommitsMerged.AddRange(SplitResult(commitsAMerger));
 
             // On effectue un Checkout de la branch 1 (en detach pour ne pas avoir d'impact sur celle-ci)
-            ExecuteCommand(repoConf.DirectoryPath, String.Format("git checkout {0} --detach", branchInto));
+            ExecuteCommand(repoConf.DirectoryPath, String.Format("git checkout {0} --detach --", branchInto));
 
             // On recupere la liste de toutes les branches "filles" qui pourraient etre recuperees
             string branchesFillesAhead = ExecuteCommand(repoConf.DirectoryPath, string.Format("git branch -r --no-merged | grep \"${0}-\" | ForEach-Object {{ $_.Trim() }}", branchInto));
             foreach (string branchName in SplitResult(branchesFillesAhead))
             {
-                string lastUpdate = ExecuteCommand(repoConf.DirectoryPath, string.Format("git log -1 --pretty=format:%cr {0}", branchName));
+                string lastUpdate = ExecuteCommand(repoConf.DirectoryPath, string.Format("git log -1 --pretty=format:%cr {0} --", branchName));
                 mailStruct.BranchesAhead.Add(new MailStructBranch() { BranchName = branchName, LastUpdate = lastUpdate });
             }
 
@@ -97,7 +97,7 @@ namespace GitMail
             string branchesFillesBefore = ExecuteCommand(repoConf.DirectoryPath, string.Format("git branch -r --merged | grep \"${0}-\" | ForEach-Object {{ $_.Trim() }}", branchInto));
             foreach (string branchName in SplitResult(branchesFillesBefore))
             {
-                string lastUpdate = ExecuteCommand(repoConf.DirectoryPath, string.Format("git log -1 --pretty=format:%cr {0}", branchName));
+                string lastUpdate = ExecuteCommand(repoConf.DirectoryPath, string.Format("git log -1 --pretty=format:%cr {0} --", branchName));
                 mailStruct.BranchesBefore.Add(new MailStructBranch() { BranchName = branchName, LastUpdate = lastUpdate });
             }
 
