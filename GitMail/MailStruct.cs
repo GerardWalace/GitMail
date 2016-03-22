@@ -43,6 +43,12 @@ namespace GitMail
         /// <returns>Un string contenant la page HTML</returns>
         public String GetMailBody()
         {
+            // On ordonne les listes puisqu'elles sont remplies par des thread en parallele
+            var branchesAhead = BranchesAhead.OrderBy(b => b.BranchName).ToList();
+            var branchesBefore = BranchesBefore.OrderBy(b => b.BranchName).ToList();
+            var commitsMerged = CommitsMerged; // On ordonne pas les commits puisqu'ils sont classés par date
+            var fichiers = Fichiers.OrderBy(f => f.FichierPath).ToList();
+
             string html = String.Empty;
 
             html += "<html>";
@@ -51,9 +57,9 @@ namespace GitMail
             //html += "<p>&nbsp;</p>";
 
             // S'il y eu des conflits
-            if (Fichiers.Any())
+            if (fichiers.Any())
             {
-                html += String.Format("<p>Il y a eu <b><span style='font-size:14.0pt;color:red'>{0}</span></b> conflits !!!</p>", Fichiers.Count);
+                html += String.Format("<p>Il y a eu <b><span style='font-size:14.0pt;color:red'>{0}</span></b> conflits !!!</p>", fichiers.Count);
 
                 //html += "<p>&nbsp;</p>";
                 html += "<p><b><u>En voici la liste :</u></b></p>";
@@ -73,7 +79,7 @@ namespace GitMail
                 html += "</tr>";
 
                 // Une ligne pour chaque fichier
-                foreach (var fichier in Fichiers)
+                foreach (var fichier in fichiers)
                 {
                     html += "<tr>";
                     html += "<td style='padding:5px'>";
@@ -105,11 +111,11 @@ namespace GitMail
             }
 
             //html += "<p>&nbsp;</p>";
-            html += String.Format("<p><b><u>La listes des <span style='font-size:14.0pt;color:red'>{0}</span> commits qui peuvent être mergés de {1} vers {2} est la suivante :</u></b></p>", CommitsMerged.Count, BranchFrom, BranchInto);
+            html += String.Format("<p><b><u>La listes des <span style='font-size:14.0pt;color:red'>{0}</span> commits qui peuvent être mergés de {1} vers {2} est la suivante :</u></b></p>", commitsMerged.Count, BranchFrom, BranchInto);
             //html += "<p>&nbsp;</p>";
 
             html += "<table border=1 cellspacing=0 cellpadding=0 style='margin-left:50px'>";
-            foreach (var commit in CommitsMerged)
+            foreach (var commit in commitsMerged)
             {
                 html += "<tr>";
                 html += "<td style='padding:5px'>";
@@ -120,11 +126,11 @@ namespace GitMail
             html += "</table>";
 
             //html += "<p>&nbsp;</p>";
-            html += String.Format("<p><b><u>La listes des <span style='font-size:14.0pt;color:red'>{0}</span> branches \"filles\" qui peuvent être mergés vers {1} est la suivante :</u></b></p>", BranchesAhead.Count, BranchInto);
+            html += String.Format("<p><b><u>La listes des <span style='font-size:14.0pt;color:red'>{0}</span> branches \"filles\" qui peuvent être mergés vers {1} est la suivante :</u></b></p>", branchesAhead.Count, BranchInto);
             //html += "<p>&nbsp;</p>";
 
             html += "<table border=1 cellspacing=0 cellpadding=0 style='margin-left:50px'>";
-            foreach (var branch in BranchesAhead)
+            foreach (var branch in branchesAhead)
             {
                 html += "<tr>";
                 html += "<td style='padding:5px'>";
@@ -138,11 +144,11 @@ namespace GitMail
             html += "</table>";
 
             //html += "<p>&nbsp;</p>";
-            html += String.Format("<p><b><u>Certaines branches \"filles\" (<span style='font-size:14.0pt;color:red'>{0}</span>) de {1} pourraient être supprimées :</u></b></p>", BranchesBefore.Count, BranchInto);
+            html += String.Format("<p><b><u>Certaines branches \"filles\" (<span style='font-size:14.0pt;color:red'>{0}</span>) de {1} pourraient être supprimées :</u></b></p>", branchesBefore.Count, BranchInto);
             //html += "<p>&nbsp;</p>";
 
             html += "<table border=1 cellspacing=0 cellpadding=0 style='margin-left:50px'>";
-            foreach (var branch in BranchesBefore)
+            foreach (var branch in branchesBefore)
             {
                 html += "<tr>";
                 html += "<td style='padding:5px'>";

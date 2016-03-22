@@ -17,6 +17,8 @@ namespace GitMail
     {
         static void Main(string[] args)
         {
+            var time_Debut = DateTime.Now;
+
             // On récupère la conf
             var conf = GitMailConfiguration.Instance;
 
@@ -61,45 +63,70 @@ namespace GitMail
                 }
             }
 
+            var time_Fin = DateTime.Now;
             // On fait une pause afin de laisser l'utilisateur checker que tout va bien.
+            Console.WriteLine("Debut Traitement = {0}", time_Debut);
+            Console.WriteLine("Fin Traitement = {0}", time_Fin);
             Console.WriteLine("End of GitMail... Press Enter...");
             Console.ReadLine();
         }
 
         private static void MergeAndMail(RepositoryConfiguration repoConf, string destinataire, string branchInto, string branchFrom)
         {
+            var semaphore = new Object();
+
             var mailStruct = new MailStruct();
             mailStruct.Objet = String.Format("[GitMail] Simulation de merge {0} vers {1}", branchFrom, branchInto);
             mailStruct.Destinataire = destinataire;
             mailStruct.BranchInto = branchInto;
             mailStruct.BranchFrom = branchFrom;
 
-            // On indique le dernier commit sur chaque branche
-            mailStruct.BranchInto_LastCommit = ExecuteCommand(repoConf.DirectoryPath, String.Format("git log -1 --pretty=format:\"%h\" {0} --", branchInto)); ;
-            mailStruct.BranchFrom_LastCommit = ExecuteCommand(repoConf.DirectoryPath, String.Format("git log -1 --pretty=format:\"%h\" {0} --", branchFrom)); ;
+            // On lance quelques commandes Git en parralèle
+            Parallel.Invoke(
+                // On indique le dernier commit sur chaque branche
+            () => { mailStruct.BranchInto_LastCommit = ExecuteCommand(repoConf.DirectoryPath, String.Format("git log -1 --pretty=format:\"%h\" {0} --", branchInto)); },
+            () => { mailStruct.BranchFrom_LastCommit = ExecuteCommand(repoConf.DirectoryPath, String.Format("git log -1 --pretty=format:\"%h\" {0} --", branchFrom)); },
 
-            // On liste les commits qui vont être mergés
-            string commitsAMerger = ExecuteCommand(repoConf.DirectoryPath, String.Format("git log --oneline {0}..{1} --", branchInto, branchFrom));
-            mailStruct.CommitsMerged.AddRange(SplitResult(commitsAMerger));
+                // On liste les commits qui vont être mergés
+            () =>
+            {
+                string commitsAMerger = ExecuteCommand(repoConf.DirectoryPath, String.Format("git log --oneline {0}..{1} --", branchInto, branchFrom));
+                mailStruct.CommitsMerged.AddRange(SplitResult(commitsAMerger));
+            }
+            );
 
             // On effectue un Checkout de la branch 1 (en detach pour ne pas avoir d'impact sur celle-ci)
             ExecuteCommand(repoConf.DirectoryPath, String.Format("git checkout {0} --detach --", branchInto));
 
             // On recupere la liste de toutes les branches "filles" qui pourraient etre recuperees
             string branchesFillesAhead = ExecuteCommand(repoConf.DirectoryPath, string.Format("git branch -r --no-merged | grep \"${0}-\" | ForEach-Object {{ $_.Trim() }}", branchInto));
-            foreach (string branchName in SplitResult(branchesFillesAhead))
+
+            Parallel.ForEach(SplitResult(branchesFillesAhead), (branchName) =>
             {
                 string lastUpdate = ExecuteCommand(repoConf.DirectoryPath, string.Format("git log -1 --pretty=format:%cr {0} --", branchName));
-                mailStruct.BranchesAhead.Add(new MailStructBranch() { BranchName = branchName, LastUpdate = lastUpdate });
+                var mailStructBranch = new MailStructBranch() { BranchName = branchName, LastUpdate = lastUpdate };
+
+                lock (semaphore)
+                {
+                    mailStruct.BranchesAhead.Add(mailStructBranch);
+                }
             }
+            );
 
             // On recupere la liste de toutes les branches "filles" qui peuvent etre supprimees
             string branchesFillesBefore = ExecuteCommand(repoConf.DirectoryPath, string.Format("git branch -r --merged | grep \"${0}-\" | ForEach-Object {{ $_.Trim() }}", branchInto));
-            foreach (string branchName in SplitResult(branchesFillesBefore))
+
+            Parallel.ForEach(SplitResult(branchesFillesBefore), (branchName) =>
             {
                 string lastUpdate = ExecuteCommand(repoConf.DirectoryPath, string.Format("git log -1 --pretty=format:%cr {0} --", branchName));
-                mailStruct.BranchesBefore.Add(new MailStructBranch() { BranchName = branchName, LastUpdate = lastUpdate });
+                var mailStructBranch = new MailStructBranch() { BranchName = branchName, LastUpdate = lastUpdate };
+
+                lock (semaphore)
+                {
+                    mailStruct.BranchesBefore.Add(mailStructBranch);
+                }
             }
+            );
 
             // On effectue le merge avec la branch 2
             ExecuteCommand(repoConf.DirectoryPath, String.Format("git merge --quiet --stat {0}", branchFrom));
@@ -110,17 +137,23 @@ namespace GitMail
 
             if (listFichiers.Any())
             {
-                foreach (var fichier in listFichiers)
+                Parallel.ForEach(listFichiers, (fichier) =>
                 {
                     var mailStructFichier = new MailStructFichier();
                     mailStructFichier.FichierPath = fichier;
 
-                    // Pour chacun des fichiers en conflit, on récupère des informations sur les derniers commits
-                    mailStructFichier.LogBranchFrom.AddRange(SplitResult(ExecuteCommand(repoConf.DirectoryPath, String.Format("git log --follow {0}..{1} --pretty=format:\\\"%h %an\\\" -- {2}", branchInto, branchFrom, fichier))));
-                    mailStructFichier.LogBranchInto.AddRange(SplitResult(ExecuteCommand(repoConf.DirectoryPath, String.Format("git log --follow {0}..{1} --pretty=format:\\\"%h %an\\\" -- {2}", branchFrom, branchInto, fichier))));
+                    Parallel.Invoke(
+                        // Pour chacun des fichiers en conflit, on récupère des informations sur les derniers commits
+                    () => { mailStructFichier.LogBranchFrom.AddRange(SplitResult(ExecuteCommand(repoConf.DirectoryPath, String.Format("git log --follow {0}..{1} --pretty=format:\\\"%h %an\\\" -- {2}", branchInto, branchFrom, fichier)))); },
+                    () => { mailStructFichier.LogBranchInto.AddRange(SplitResult(ExecuteCommand(repoConf.DirectoryPath, String.Format("git log --follow {0}..{1} --pretty=format:\\\"%h %an\\\" -- {2}", branchFrom, branchInto, fichier)))); }
+                    );
 
-                    mailStruct.Fichiers.Add(mailStructFichier);
+                    lock(semaphore)
+                    {
+                        mailStruct.Fichiers.Add(mailStructFichier);
+                    }
                 }
+                );
             }
 
             if (File.Exists(Path.Combine(repoConf.DirectoryPath, ".git", "MERGE_HEAD")))
