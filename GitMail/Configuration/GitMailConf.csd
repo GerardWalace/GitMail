@@ -44,6 +44,36 @@
             <externalTypeMoniker name="/c5f6cfa3-856e-4533-83e4-0da973fb5c4a/String" />
           </type>
         </attributeProperty>
+        <attributeProperty name="Mail_Host" isRequired="true" isKey="false" isDefaultCollection="false" xmlName="mail_Host" isReadOnly="false">
+          <type>
+            <externalTypeMoniker name="/c5f6cfa3-856e-4533-83e4-0da973fb5c4a/String" />
+          </type>
+        </attributeProperty>
+        <attributeProperty name="Mail_Port" isRequired="true" isKey="false" isDefaultCollection="false" xmlName="mail_Port" isReadOnly="false">
+          <type>
+            <externalTypeMoniker name="/c5f6cfa3-856e-4533-83e4-0da973fb5c4a/Int32" />
+          </type>
+        </attributeProperty>
+        <attributeProperty name="Mail_EnableSsl" isRequired="false" isKey="false" isDefaultCollection="false" xmlName="mail_EnableSsl" isReadOnly="false" defaultValue="true">
+          <type>
+            <externalTypeMoniker name="/c5f6cfa3-856e-4533-83e4-0da973fb5c4a/Boolean" />
+          </type>
+        </attributeProperty>
+        <attributeProperty name="Mail_From" isRequired="true" isKey="false" isDefaultCollection="false" xmlName="mail_From" isReadOnly="false">
+          <type>
+            <externalTypeMoniker name="/c5f6cfa3-856e-4533-83e4-0da973fb5c4a/String" />
+          </type>
+        </attributeProperty>
+        <attributeProperty name="Mail_Login" isRequired="true" isKey="false" isDefaultCollection="false" xmlName="mail_Login" isReadOnly="false">
+          <type>
+            <externalTypeMoniker name="/c5f6cfa3-856e-4533-83e4-0da973fb5c4a/String" />
+          </type>
+        </attributeProperty>
+        <attributeProperty name="Mail_Password" isRequired="true" isKey="false" isDefaultCollection="false" xmlName="mail_Password" isReadOnly="false">
+          <type>
+            <externalTypeMoniker name="/c5f6cfa3-856e-4533-83e4-0da973fb5c4a/String" />
+          </type>
+        </attributeProperty>
       </attributeProperties>
       <elementProperties>
         <elementProperty name="Merges" isRequired="false" isKey="false" isDefaultCollection="false" xmlName="merges" isReadOnly="false">

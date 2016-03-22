@@ -50,6 +50,36 @@
 				<xs:documentation>The DirectoryPath.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
+		<xs:attribute name="mail_Host" use="required" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>The Mail_Host.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="mail_Port" use="required" type="xs:int">
+			<xs:annotation>
+				<xs:documentation>The Mail_Port.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="mail_EnableSsl" use="optional" type="xs:boolean">
+			<xs:annotation>
+				<xs:documentation>The Mail_EnableSsl.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="mail_From" use="required" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>The Mail_From.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="mail_Login" use="required" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>The Mail_Login.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="mail_Password" use="required" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>The Mail_Password.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
 	</xs:complexType>
 	<xs:complexType name="GitMail.Configuration.MergeCollectionCT">
 		<xs:choice minOccurs="0" maxOccurs="unbounded">

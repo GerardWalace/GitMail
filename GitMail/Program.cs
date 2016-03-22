@@ -134,7 +134,8 @@ namespace GitMail
 
             // On envoi le mail si un merge est possible (s'il y a des commits "Ahead")
             if (mailStruct.CommitsMerged.Any() || mailStruct.BranchesAhead.Any() || mailStruct.BranchesBefore.Any())
-                SendMail(mailStruct.Objet, mailStruct.Destinataire, body);
+                SendMail(repoConf.Mail_Host, repoConf.Mail_Port, repoConf.Mail_From, repoConf.Mail_Login, repoConf.Mail_Password, repoConf.Mail_EnableSsl,
+                    mailStruct.Objet, mailStruct.Destinataire, body);
         }
 
         static List<string> SplitResult(string output)
@@ -226,19 +227,19 @@ namespace GitMail
             }
         }
 
-        static void SendMail(string subject, string destinataires, string body)
+        static void SendMail(string mail_host, int mail_port, string mail_from, string mail_login, string mail_password, bool mail_enablessl, string subject, string destinataires, string body)
         {
-            MailMessage mail = new MailMessage("test.git@gmail.com", destinataires);
+            MailMessage mail = new MailMessage(mail_from, destinataires);
             SmtpClient client = new SmtpClient();
-            
-            client.Port = 25;
+
+            client.Port = mail_port;
 
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
             client.UseDefaultCredentials = false;
-            client.EnableSsl = true;
-            client.Credentials = new NetworkCredential("test.git@gmail.com", "password");
+            client.EnableSsl = mail_enablessl;
+            client.Credentials = new NetworkCredential(mail_login, mail_password);
             
-            client.Host = "smtp.gmail.com";
+            client.Host = mail_host;
             
             mail.Subject = subject;
             mail.IsBodyHtml = true;
