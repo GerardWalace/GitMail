@@ -186,7 +186,7 @@ namespace GitMail
 
         static string ExecuteCommand(string workingDirectory, string command)
         {
-            int timeout = 600000;// 10 minutes de timeout...
+            int timeout = 1200000;// 20 minutes de timeout...
 
             //Console.WriteLine();
             Console.WriteLine(command);
