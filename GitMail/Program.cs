@@ -285,6 +285,7 @@ namespace GitMail
             catch(Exception e)
             {
                 Console.WriteLine(e);
+                File.WriteAllText(String.Format("{0}.htm", Path.GetRandomFileName()), body);
             }
         }
     }
