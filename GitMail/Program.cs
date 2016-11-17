@@ -33,7 +33,10 @@ namespace GitMail
                 if (!Directory.Exists(repoConf.DirectoryPath))
                     ExecuteCommand(String.Format("git clone {0} {1}", repoConf.RepositoryPath, repoConf.DirectoryPath));
                 else
+                {
                     ExecuteCommand(repoConf.DirectoryPath, "git fetch --prune");
+                    CleanOldMerge(repoConf);
+                }
 
                 // On nettoie le repo pour supprimer tous les commit temporaires effectué par un precedent traitement
                 ExecuteCommand(repoConf.DirectoryPath, "git gc --auto");
@@ -156,11 +159,7 @@ namespace GitMail
                 );
             }
 
-            if (File.Exists(Path.Combine(repoConf.DirectoryPath, ".git", "MERGE_HEAD")))
-            {
-                // On annule le merge en erreur
-                ExecuteCommand(repoConf.DirectoryPath, "git merge --abort");
-            }
+            CleanOldMerge(repoConf);
 
             // On prépare le mail de récapitulatif
             string body = mailStruct.GetMailBody();
@@ -169,6 +168,15 @@ namespace GitMail
             if (mailStruct.CommitsMerged.Any() || mailStruct.BranchesAhead.Any() || mailStruct.BranchesBefore.Any())
                 SendMail(repoConf.Mail_Host, repoConf.Mail_Port, repoConf.Mail_From, repoConf.Mail_Login, repoConf.Mail_Password, repoConf.Mail_EnableSsl,
                     mailStruct.Objet, mailStruct.Destinataire, body);
+        }
+
+        private static void CleanOldMerge(RepositoryConfiguration repoConf)
+        {
+            if (File.Exists(Path.Combine(repoConf.DirectoryPath, ".git", "MERGE_HEAD")))
+            {
+                // On annule le merge en erreur
+                ExecuteCommand(repoConf.DirectoryPath, "git merge --abort");
+            }
         }
 
         static List<string> SplitResult(string output)
